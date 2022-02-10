@@ -39,7 +39,7 @@ You can set any or all of the following input parameters:
 |Name                     |Type    |Required? |Default                     |Description
 |-------------------------|--------|----------|----------------------------|------------------------------------
 |`owners-path`            |string  |no        |OWNERS                      |OWNERS file path including the actual file name
-|`n-random-reviewers`     |string  |no        |                            |If you want, the action can expose also random reviewers
+|`n-random-reviewers`     |number  |no        |                            |If you want, the action can expose also random reviewers
 
 
 Output Variables
