@@ -5786,9 +5786,8 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(241);
 const path = __nccwpck_require__(17);
+const fs = __nccwpck_require__(147);
 const yaml = __nccwpck_require__(72);
-
-const REPO_PATH = "/github/workspace/";
 
 try {
   const repoOwnersPath = core.getInput("owners-path");
@@ -5796,7 +5795,10 @@ try {
 
   console.log("OWNERS FILE", repoOwnersPath);
 
-  const absoluteOwensersPath = path.resolve(REPO_PATH, repoOwnersPath);
+  const absoluteOwensersPath = path.resolve(
+    process.env.GITHUB_WORKSPACE,
+    repoOwnersPath
+  );
 
   const owners = yaml.load(fs.readFileSync(absoluteOwensersPath, "utf8"));
 
