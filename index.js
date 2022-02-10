@@ -3,15 +3,16 @@ const path = require("path");
 const fs = require("fs");
 const yaml = require("js-yaml");
 
-const REPO_PATH = "/github/workspace/";
-
 try {
   const repoOwnersPath = core.getInput("owners-path");
   const numberReviewers = core.getInput("n-random-reviewers");
 
   console.log("OWNERS FILE", repoOwnersPath);
 
-  const absoluteOwensersPath = path.resolve(REPO_PATH, repoOwnersPath);
+  const absoluteOwensersPath = path.resolve(
+    process.env.GITHUB_WORKSPACE,
+    repoOwnersPath
+  );
 
   const owners = yaml.load(fs.readFileSync(absoluteOwensersPath, "utf8"));
 
