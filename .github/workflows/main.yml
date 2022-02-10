@@ -1,0 +1,21 @@
+on: [push]
+
+jobs:
+  test_get_owners_action:
+    runs-on: ubuntu-latest
+    name: Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test
+        id: hello
+        uses: ./
+        with:
+          owners-path: './test/OWNERS'
+          n-random-reviewers: 2
+      - name: Get approvers
+        run: echo "The Approvers are ${{ steps.hello.outputs.approvers }}"
+      - name: Get reviewers
+        run: echo "The Reviewers are ${{ steps.hello.outputs.reviewers }}"
+      - name: Get random reviewers
+        run: echo "The Random reviewers are ${{ steps.hello.outputs.random-reviewers }}"
