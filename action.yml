@@ -1,0 +1,16 @@
+name: 'Get Owners'
+description: 'Parse Owners file and expose approvers, reviewers and random reviewers'
+inputs:
+  owners-path:  # id of input
+    description: 'OWNERS file repo path (including the actual file name)'
+    required: false
+    default: 'OWNERS'
+  n-random-reviewers:
+    description: 'Number of random reviewers you want to generate'
+    required: false
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'node16'
+  main: 'index.js'

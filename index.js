@@ -1,5 +1,4 @@
 const core = require("@actions/core");
-const github = require("@actions/github");
 const path = require("path");
 const fs = require("fs");
 const yaml = require("js-yaml");
@@ -7,7 +6,7 @@ const yaml = require("js-yaml");
 const REPO_PATH = "/github/workspace/";
 
 try {
-  const repoOwnersPath = core.getInput("owners-path") || "OWNERS";
+  const repoOwnersPath = core.getInput("owners-path");
   const numberReviewers = core.getInput("n-random-reviewers");
 
   console.log("OWNERS FILE", repoOwnersPath);
