@@ -1,4 +1,4 @@
-on: [push]
+on: push
 
 jobs:
   test_get_owners_action:
@@ -7,15 +7,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Test
-        id: hello
+      - name: Parse OWNERS
+        id: owners
         uses: ./
         with:
           owners-path: './test/OWNERS'
           n-random-reviewers: 2
       - name: Get approvers
-        run: echo "The Approvers are ${{ steps.hello.outputs.approvers }}"
+        run: echo "The Approvers are ${{ steps.owners.outputs.approvers }}"
       - name: Get reviewers
-        run: echo "The Reviewers are ${{ steps.hello.outputs.reviewers }}"
+        run: echo "The Reviewers are ${{ steps.owners.outputs.reviewers }}"
       - name: Get random reviewers
-        run: echo "The Random reviewers are ${{ steps.hello.outputs.random-reviewers }}"
+        run: echo "The Random reviewers are ${{ steps.owners.outputs.random-reviewers }}"
