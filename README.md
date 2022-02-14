@@ -40,6 +40,7 @@ You can set any or all of the following input parameters:
 |-------------------------|--------|----------|----------------------------|------------------------------------
 |`owners-path`            |string  |no        |OWNERS                      |OWNERS file path including the actual file name
 |`n-random-reviewers`     |number  |no        |                            |If you want, the action can expose also random reviewers
+|`auto-add`               |boolean |no        |false                       |Should add the random reviewers to pr automatically. Ignored if pr not found
 
 
 Output Variables
@@ -49,4 +50,4 @@ Output Variables
 |-------------------|----------|------------------------------------
 |`approvers`        |string[]  |All the approvers in the OWNERS file
 |`reviewers`        |string[]  |All the reviewers in the OWNERS file
-|`random-reviewers` |string[]  |Random reviewers
+|`random-reviewers` |string[]  |Random reviewers excluding sender
