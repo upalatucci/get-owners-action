@@ -71,6 +71,8 @@ try {
       addReviewers(github.context.payload.pull_request?.number, selectedReviewers).then(() =>
         console.log("Successfully added reviewers")
       );
+    } else {
+      console.log('No PR found')
     }
 
     console.log("End");
