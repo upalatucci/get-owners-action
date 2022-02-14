@@ -13,6 +13,7 @@ jobs:
         with:
           owners-path: './test/OWNERS'
           n-random-reviewers: 2
+          auto-add: true
       - name: Get approvers
         run: echo "The Approvers are ${{ steps.owners.outputs.approvers }}"
       - name: Get reviewers

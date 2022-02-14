@@ -8,9 +8,17 @@ inputs:
   n-random-reviewers:
     description: 'Number of random reviewers you want to generate'
     required: false
+  auto-add:
+    description: 'Should add the random reviewers to pr automatically. Ignored if pr not found'
+    required: false
+    default: false
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  approvers:
+    description: 'All the approvers in the OWNERS file'
+  reviewers:
+    description: 'All the reviewers in the OWNERS file'
+  random-reviewers:
+    description: 'Random reviewers excluding sender'
 runs:
   using: 'node16'
   main: 'dist/index.js'
