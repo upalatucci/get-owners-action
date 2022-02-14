@@ -1,10 +1,11 @@
-const core = require("@actions/core");
-const github = require("@actions/github");
-const path = require("path");
-const fs = require("fs");
-const yaml = require("js-yaml");
+import core from"@actions/core";
+import github, {context} from "@actions/github"
+import path from "path"
+import fs from "fs"
+import yaml from "js-yaml"
+import { Context } from "@actions/github/lib/context";
 
-function pickRandomReviewers(context, allReviewers, numberReviewers) {
+function pickRandomReviewers(context: Context, allReviewers: string[], numberReviewers: number) {
   const author = context.payload.sender?.login;
 
   console.log("selecting random reviewers excluding", author);
@@ -21,7 +22,7 @@ function pickRandomReviewers(context, allReviewers, numberReviewers) {
   return randomReviewers;
 }
 
-async function addReviewers(context, reviewers) {
+async function addReviewers(context: Context, prNumber: number, reviewers: string[]) {
   const token = process.env["GITHUB_TOKEN"] || core.getInput("token");
 
   if (!token) {
@@ -30,12 +31,9 @@ async function addReviewers(context, reviewers) {
 
   const client = github.getOctokit(token);
 
-  const pullRequestNumber = context.payload.pull_request.number;
-
-  await client.pulls.createReviewRequest({
-    owner: context.owner,
-    repo: context.repo,
-    pull_number: pullRequestNumber,
+  await client.rest.pulls.requestReviewers({
+    ...context.repo,
+    pull_number: prNumber,
     reviewers,
   });
 }
@@ -48,11 +46,11 @@ try {
   console.log("OWNERS FILE", repoOwnersPath);
 
   const absoluteOwensersPath = path.resolve(
-    process.env.GITHUB_WORKSPACE,
+    process.env.GITHUB_WORKSPACE as string,
     repoOwnersPath
   );
 
-  const owners = yaml.load(fs.readFileSync(absoluteOwensersPath, "utf8"));
+  const owners = yaml.load(fs.readFileSync(absoluteOwensersPath, "utf8")) as any;
 
   console.log(`Approvers ${owners.approvers}`);
   console.log(`Reviewers ${owners.reviewers}`);
@@ -66,14 +64,14 @@ try {
     const selectedReviewers = pickRandomReviewers(
       context,
       owners.reviewers,
-      numberReviewers
+      parseInt(numberReviewers, 10)
     );
 
     if (
       autoAddReviewers &&
       context.payload.pull_request?.number !== undefined
     ) {
-      addReviewers(context, selectedReviewers).then(() =>
+      addReviewers(context, context.payload.pull_request?.number, selectedReviewers).then(() =>
         console.log("Successfully added reviewers")
       );
     }
@@ -81,6 +79,8 @@ try {
     console.log("End");
   }
 } catch (error) {
+  if (error instanceof Error) {
   console.error(error.message);
   core.setFailed(error.message);
+  }
 }
