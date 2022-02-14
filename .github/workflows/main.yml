@@ -13,7 +13,7 @@ jobs:
         with:
           owners-path: './test/OWNERS'
           n-random-reviewers: 2
-          auto-add: true
+          auto-add-reviewers: true
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Get approvers
         run: echo "The Approvers are ${{ steps.owners.outputs.approvers }}"

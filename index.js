@@ -48,7 +48,7 @@ async function addReviewers(context, reviewers) {
 try {
   const repoOwnersPath = core.getInput("owners-path");
   const numberReviewers = core.getInput("n-random-reviewers");
-  const autoAdd = core.getInput("auto-add");
+  const autoAddReviewers = core.getInput("auto-add-reviewers");
 
   console.log("OWNERS FILE", repoOwnersPath);
 
@@ -74,7 +74,10 @@ try {
       numberReviewers
     );
 
-    if (autoAdd && context.payload.pull_request?.number !== undefined) {
+    if (
+      autoAddReviewers &&
+      context.payload.pull_request?.number !== undefined
+    ) {
       addReviewers(context, selectedReviewers);
     }
   }

@@ -8,7 +8,7 @@ inputs:
   n-random-reviewers:
     description: 'Number of random reviewers you want to generate'
     required: false
-  auto-add:
+  auto-add-reviewers:
     description: 'Should add the random reviewers to pr automatically. Ignored if pr not found'
     required: false
     default: false
