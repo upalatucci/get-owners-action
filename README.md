@@ -23,6 +23,7 @@ jobs:
         with:
           owners-path: './test/OWNERS'
           n-random-reviewers: 2
+          auto-add: true
       - name: Get approvers
         run: echo "The Approvers are ${{ steps.owners.outputs.approvers }}"
       - name: Get reviewers
@@ -41,6 +42,7 @@ You can set any or all of the following input parameters:
 |`owners-path`            |string  |no        |OWNERS                      |OWNERS file path including the actual file name
 |`n-random-reviewers`     |number  |no        |                            |If you want, the action can expose also random reviewers
 |`auto-add`               |boolean |no        |false                       |Should add the random reviewers to pr automatically. Ignored if pr not found
+|`token`                  |string  |no        |                            |Secret Token to add Reviewers
 
 
 Output Variables

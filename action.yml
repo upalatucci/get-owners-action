@@ -12,6 +12,9 @@ inputs:
     description: 'Should add the random reviewers to pr automatically. Ignored if pr not found'
     required: false
     default: false
+  token:
+    description: 'Secret Token to add Reviewers'
+    required: false
 outputs:
   approvers:
     description: 'All the approvers in the OWNERS file'
