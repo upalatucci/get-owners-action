@@ -1,5 +1,5 @@
-import core from"@actions/core";
-import github, {context} from "@actions/github"
+import * as core from '@actions/core'
+import github from "@actions/github"
 import path from "path"
 import fs from "fs"
 import yaml from "js-yaml"
