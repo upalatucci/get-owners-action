@@ -4,9 +4,51 @@ const path = require("path");
 const fs = require("fs");
 const yaml = require("js-yaml");
 
+function pickRandomReviewers(context, allReviewers, numberReviewers) {
+  const author = context.payload.sender?.login;
+
+  console.log("selecting random reviewers excluding", author);
+
+  const shuffled = [...allReviewers]
+    .filter((reviewers) => reviewers !== author)
+    .sort(() => 0.5 - Math.random());
+
+  const randomReviewers = shuffled.slice(0, numberReviewers);
+
+  console.log("Random reviewers selected", randomReviewers);
+  core.setOutput("random-reviewers", randomReviewers);
+
+  return randomReviewers;
+}
+
+async function addReviewers(context, reviewers) {
+  try {
+    const token = process.env["GITHUB_TOKEN"] || core.getInput("token");
+
+    if (!token) {
+      console.log("token not specified");
+    }
+
+    const client = github.getOctokit(token);
+
+    const pullRequestNumber = context.payload.pull_request.number;
+
+    await client.pulls.createReviewRequest({
+      owner: context.owner,
+      repo: context.repo,
+      pull_number: pullRequestNumber,
+      reviewers,
+    });
+    console.log("Successfully added reviewers");
+  } catch (error) {
+    core.setFailed(error.message);
+  }
+}
+
 try {
   const repoOwnersPath = core.getInput("owners-path");
   const numberReviewers = core.getInput("n-random-reviewers");
+  const autoAdd = core.getInput("auto-add");
 
   console.log("OWNERS FILE", repoOwnersPath);
 
@@ -25,32 +67,15 @@ try {
 
   if (numberReviewers) {
     const context = github.context;
-    const author = context.payload.sender?.login;
 
-    console.log("selecting random reviewers excluding", author);
-
-    const shuffled = [...owners.reviewers]
-      .filter((reviewers) => reviewers !== author)
-      .sort(() => 0.5 - Math.random());
-
-    const selectedReviewers = shuffled.slice(0, numberReviewers);
-
-    console.log("Random reviewers selected", selectedReviewers);
-    core.setOutput("random-reviewers", selectedReviewers);
-
-    const autoAdd = core.getInput("auto-add");
+    const selectedReviewers = pickRandomReviewers(
+      context,
+      owners.reviewers,
+      numberReviewers
+    );
 
     if (autoAdd && context.payload.pull_request?.number !== undefined) {
-      const token = process.env["GITHUB_TOKEN"] || core.getInput("token");
-      const octokit = new github.getOctokit(token);
-
-      const pullRequestNumber = context.payload.pull_request.number;
-
-      octokit.pulls.requestReviewers({
-        ...context.repo,
-        pull_number: pullRequestNumber,
-        reviewers: selectedReviewers,
-      });
+      addReviewers(context, selectedReviewers);
     }
   }
 } catch (error) {
