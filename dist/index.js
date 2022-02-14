@@ -40,13 +40,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(6241));
-const github_1 = __importDefault(__nccwpck_require__(1338));
+const github = __importStar(__nccwpck_require__(1338));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const js_yaml_1 = __importDefault(__nccwpck_require__(72));
-function pickRandomReviewers(context, allReviewers, numberReviewers) {
+function pickRandomReviewers(allReviewers, numberReviewers) {
     var _a;
-    const author = (_a = context.payload.sender) === null || _a === void 0 ? void 0 : _a.login;
+    const author = (_a = github.context.payload.sender) === null || _a === void 0 ? void 0 : _a.login;
     console.log("selecting random reviewers excluding", author);
     const shuffled = [...allReviewers]
         .filter((reviewers) => reviewers !== author)
@@ -56,14 +56,14 @@ function pickRandomReviewers(context, allReviewers, numberReviewers) {
     core.setOutput("random-reviewers", randomReviewers);
     return randomReviewers;
 }
-function addReviewers(context, prNumber, reviewers) {
+function addReviewers(prNumber, reviewers) {
     return __awaiter(this, void 0, void 0, function* () {
         const token = process.env["GITHUB_TOKEN"] || core.getInput("token");
         if (!token) {
             console.log("token not specified");
         }
-        const client = github_1.default.getOctokit(token);
-        yield client.rest.pulls.requestReviewers(Object.assign(Object.assign({}, context.repo), { pull_number: prNumber, reviewers }));
+        const client = github.getOctokit(token);
+        yield client.rest.pulls.requestReviewers(Object.assign(Object.assign({}, github.context.repo), { pull_number: prNumber, reviewers }));
     });
 }
 try {
@@ -78,11 +78,10 @@ try {
     core.setOutput("approvers", owners.approvers);
     core.setOutput("reviewers", owners.reviewers);
     if (numberReviewers) {
-        const context = github_1.default.context;
-        const selectedReviewers = pickRandomReviewers(context, owners.reviewers, parseInt(numberReviewers, 10));
+        const selectedReviewers = pickRandomReviewers(owners.reviewers, parseInt(numberReviewers, 10));
         if (autoAddReviewers &&
-            ((_a = context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.number) !== undefined) {
-            addReviewers(context, (_b = context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.number, selectedReviewers).then(() => console.log("Successfully added reviewers"));
+            ((_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.number) !== undefined) {
+            addReviewers((_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.number, selectedReviewers).then(() => console.log("Successfully added reviewers"));
         }
         console.log("End");
     }

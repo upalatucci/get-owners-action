@@ -1,12 +1,11 @@
 import * as core from '@actions/core'
-import github from "@actions/github"
+import * as github from '@actions/github'
 import path from "path"
 import fs from "fs"
 import yaml from "js-yaml"
-import { Context } from "@actions/github/lib/context";
 
-function pickRandomReviewers(context: Context, allReviewers: string[], numberReviewers: number) {
-  const author = context.payload.sender?.login;
+function pickRandomReviewers(allReviewers: string[], numberReviewers: number) {
+  const author = github.context.payload.sender?.login;
 
   console.log("selecting random reviewers excluding", author);
 
@@ -22,7 +21,7 @@ function pickRandomReviewers(context: Context, allReviewers: string[], numberRev
   return randomReviewers;
 }
 
-async function addReviewers(context: Context, prNumber: number, reviewers: string[]) {
+async function addReviewers(prNumber: number, reviewers: string[]) {
   const token = process.env["GITHUB_TOKEN"] || core.getInput("token");
 
   if (!token) {
@@ -32,7 +31,7 @@ async function addReviewers(context: Context, prNumber: number, reviewers: strin
   const client = github.getOctokit(token);
 
   await client.rest.pulls.requestReviewers({
-    ...context.repo,
+    ...github.context.repo,
     pull_number: prNumber,
     reviewers,
   });
@@ -59,19 +58,17 @@ try {
   core.setOutput("reviewers", owners.reviewers);
 
   if (numberReviewers) {
-    const context = github.context;
 
     const selectedReviewers = pickRandomReviewers(
-      context,
       owners.reviewers,
       parseInt(numberReviewers, 10)
     );
 
     if (
       autoAddReviewers &&
-      context.payload.pull_request?.number !== undefined
+      github.context.payload.pull_request?.number !== undefined
     ) {
-      addReviewers(context, context.payload.pull_request?.number, selectedReviewers).then(() =>
+      addReviewers(github.context.payload.pull_request?.number, selectedReviewers).then(() =>
         console.log("Successfully added reviewers")
       );
     }
