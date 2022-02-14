@@ -8,7 +8,7 @@ GitHub Action
 -----------------------------
 
 ```yaml
-on: push
+on: [push, pull_request_target]
 
 jobs:
   test_get_owners_action:

@@ -12600,33 +12600,28 @@ function pickRandomReviewers(context, allReviewers, numberReviewers) {
 }
 
 async function addReviewers(context, reviewers) {
-  try {
-    const token = process.env["GITHUB_TOKEN"] || core.getInput("token");
+  const token = process.env["GITHUB_TOKEN"] || core.getInput("token");
 
-    if (!token) {
-      console.log("token not specified");
-    }
-
-    const client = github.getOctokit(token);
-
-    const pullRequestNumber = context.payload.pull_request.number;
-
-    await client.pulls.createReviewRequest({
-      owner: context.owner,
-      repo: context.repo,
-      pull_number: pullRequestNumber,
-      reviewers,
-    });
-    console.log("Successfully added reviewers");
-  } catch (error) {
-    core.setFailed(error.message);
+  if (!token) {
+    console.log("token not specified");
   }
+
+  const client = github.getOctokit(token);
+
+  const pullRequestNumber = context.payload.pull_request.number;
+
+  await client.pulls.createReviewRequest({
+    owner: context.owner,
+    repo: context.repo,
+    pull_number: pullRequestNumber,
+    reviewers,
+  });
 }
 
 try {
   const repoOwnersPath = core.getInput("owners-path");
   const numberReviewers = core.getInput("n-random-reviewers");
-  const autoAdd = core.getInput("auto-add");
+  const autoAddReviewers = core.getInput("auto-add-reviewers");
 
   console.log("OWNERS FILE", repoOwnersPath);
 
@@ -12652,11 +12647,19 @@ try {
       numberReviewers
     );
 
-    if (autoAdd && context.payload.pull_request?.number !== undefined) {
-      addReviewers(context, selectedReviewers);
+    if (
+      autoAddReviewers &&
+      context.payload.pull_request?.number !== undefined
+    ) {
+      addReviewers(context, selectedReviewers).then(() =>
+        console.log("Successfully added reviewers")
+      );
     }
+
+    console.log("End");
   }
 } catch (error) {
+  console.error(error.message);
   core.setFailed(error.message);
 }
 
