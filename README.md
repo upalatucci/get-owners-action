@@ -43,7 +43,7 @@ You can set any or all of the following input parameters:
 |`owners-path`            |string  |no        |OWNERS                      |OWNERS file path including the actual file name
 |`n-random-reviewers`     |number  |no        |                            |If you want, the action can expose also random reviewers
 |`auto-add-reviewers`     |boolean |no        |false                       |Should add the random reviewers to pr automatically. Ignored if pr not found
-|`token`                  |string  |no        |                            |Secret Token to add Reviewers ( could also be povided into the env )
+|`token`                  |string  |no        |                            |Secret Token to add Reviewers ( could also be provided using the env GITHUB_TOKEN )
 
 
 Output Variables
