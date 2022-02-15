@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Parse OWNERS
         id: owners
-        uses: upalatucci/get-owners-action@v1
+        uses: upalatucci/get-owners-action@v2.1
         with:
           owners-path: './test/OWNERS'
           n-random-reviewers: 2
